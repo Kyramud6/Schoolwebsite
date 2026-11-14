@@ -47,11 +47,11 @@ resource "aws_subnet" "public" {
 
   vpc_id                  = aws_vpc.main.id
   cidr_block              = local.network_subnets.public[count.index].cidr
-  availability_zone       = local.network_subnets[count.index].az
+  availability_zone       = local.network_subnets.public[count.index].az
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "$(var.projectname) - $(var.environment)-app-${count.index + 1}"
+    Name = "${var.projectname} - ${var.environment}-app-${count.index + 1}"
     Tier = "public"
   }
 }

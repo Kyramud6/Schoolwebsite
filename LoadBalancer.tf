@@ -1,5 +1,5 @@
 data "aws_ec2_managed_prefix_list" "cloudfront_origin" {
-  name = "com.amazonaws.global.cloudfront.origin"
+  name = "com.amazonaws.global.cloudfront.origin-facing"
 }
 
 resource "aws_security_group" "alb" {
@@ -46,6 +46,12 @@ resource "aws_lb_target_group" "wordpress" {
   protocol    = "HTTP"
   target_type = "instance"
   vpc_id      = aws_vpc.main.id
+
+
+  depends_on = [
+    aws_network_acl_rule.public_ingress,
+    aws_network_acl_rule.public_egress
+  ]
 
   health_check {
     enabled             = true

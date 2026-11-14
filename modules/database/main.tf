@@ -1,7 +1,7 @@
 resource "aws_db_subnet_group" "main" {
   name        = "${var.projectname}-${var.environment}-db-subnets"
   description = "Private data subnets for WordPress Database"
-  subnet_ids  = aws_subnet.data[*].id
+  subnet_ids  = var.subnet_ids
 
   tags = {
     Name = "${var.projectname}-${var.environment}-db-subnets"
@@ -26,7 +26,7 @@ resource "aws_db_instance" "wordpress" {
   port                        = 3306
 
   db_subnet_group_name   = aws_db_subnet_group.main.name
-  vpc_security_group_ids = [aws_security_group.database.id]
+  vpc_security_group_ids = [var.security_group_id]
   publicly_accessible    = false
 
   multi_az                   = var.az_zone_db
@@ -43,17 +43,3 @@ resource "aws_db_instance" "wordpress" {
   }
 }
 
-output "database_address" {
-  description = "Private DNS Address of RDS MySQL"
-  value       = aws_db_instance.wordpress.address
-}
-
-output "database_name" {
-  description = "WordPress db name"
-  value       = aws_db_instance.wordpress.address
-}
-
-output "database_secret_arn" {
-  description = "Secret manager ARN for the db"
-  value       = aws_db_instance.wordpress.master_user_secret[0].secret_arn
-}
