@@ -10,13 +10,13 @@ resource "aws_cloudfront_distribution" "wordpress" {
     price_class = "PriceClass_100"
 
     origin {
-        domain_name = var.lb_dns_name
+        domain_name = var.origin_domain_name
         origin_id = local.cloudfront_origin_id
 
         custom_origin_config {
             http_port = 80
             https_port = 443
-            origin_protocol_policy = "http-only"
+            origin_protocol_policy = "https-only"
             origin_ssl_protocols = ["TLSv1.2"]
         }
     }

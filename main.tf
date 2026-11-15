@@ -51,6 +51,7 @@ module "loadbalancer" {
     vpc_id            = module.network.vpc_id
     projectname      = var.projectname
     environment       = var.environment
+    domain_name = var.domain_name
 
     depends_on = [module.network, module.policies]
 }
@@ -78,7 +79,7 @@ module "compute" {
 module "cloudfront" {
     source = "./modules/cloudfront"
 
-    lb_dns_name = module.loadbalancer.lb_dns_name
+    lb_dns_name = module.loadbalancer.origin.domain_name
     projectname = var.projectname
     environment  = var.environment
 

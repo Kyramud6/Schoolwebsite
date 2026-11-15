@@ -58,3 +58,9 @@ variable "region" {
     type = string
     default = "ap-southeast-1"
 }
+
+variable "domain_name" {
+  description = "public domain and alb origin hostname"
+  type = string
+  defaut = "yakinbisalolos.click"
+}

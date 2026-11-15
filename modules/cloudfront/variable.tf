@@ -1,6 +1,6 @@
-variable "lb_dns_name" {
-    description = "DNS Hostname for CloudFront."
-    type = string
+variable "origin_domain_name" {
+  description = "DNS hostname of the ALB HTTPS origin."
+  type        = string
 }
 
 variable "projectname" {

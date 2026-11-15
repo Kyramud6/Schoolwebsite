@@ -20,3 +20,8 @@ variable "projectname" {
 variable "environment" {
     type = string
 }
+
+variable "domain_name" {
+  description = "Registered public domain."
+  type        = string
+}

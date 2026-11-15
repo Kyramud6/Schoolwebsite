@@ -23,7 +23,8 @@ locals {
   }
   network_acl_rule = {
     public_ingress = concat (
-        [{key = "cloudfront_http", rule_number = 100, cidr = "0.0.0.0/0", from_port = 80, to_port = 80}],
+        [{key = "cloudfront_http", rule_number = 100, cidr = "0.0.0.0/0", from_port = 80, to_port = 80},
+        {key = "cloudfront_https", rule_number = 101, cidr = "0.0.0.0/0", from_port = 443, to_port = 443}],
         [for index, cidr in local.network_subnets.app : {
             key = "app_ephemeral_${index}"
             rule_number = 110 + index
@@ -48,21 +49,21 @@ locals {
     app_ingress = concat(
       [for index, cidr in local.network_subnets.public : {
         key = "alb_public_${index}"
-        rule_number = 110 + index
+        rule_number = 120 + index
         cidr = cidr.cidr
         from_port = 80
         to_port = 80
       }],
       [for index, cidr in local.network_subnets.public : {
         key = "alb_ephemeral_${index}"
-        rule_number = 110 + index
+        rule_number = 130 + index
         cidr = cidr.cidr
         from_port = 1024
         to_port = 65535
       }],
       [for index, cidr in local.network_subnets.data : {
         key="database_ephemeral_${index}"
-        rule_number = 120 + index
+        rule_number = 140 + index
         cidr = cidr.cidr
         from_port = 1024
         to_port = 65535
