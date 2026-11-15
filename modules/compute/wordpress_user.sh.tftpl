@@ -4,7 +4,7 @@ set -euo pipefail
 umask 077
 trap 'rm -f /tmp/wp-db-secret.json /tmp/rds-master-secret.json /tmp/wp-cli.phar /tmp/wordpress.tar.gz' EXIT
 
-dnf install -y httpd php php-mysqlnd php-gd php-xml hp-mbstring php-intl php-zip amazon-efs-utils mariadb105 jq tar curl
+dnf install -y httpd php php-mysqlnd php-gd php-xml php-mbstring php-intl php-zip amazon-efs-utils mariadb105 jq tar curl
 systemctl enable --now httpd
 
 mkdir -p /mnt/wordpress-efs /var/www/html
@@ -32,7 +32,7 @@ exec 9>/mnt/wordpress-efs/.db-setup.lock
 flock 9
 
 if ! aws secretmanager get-secret-value --secret-id ${app_secret_arn} --query SecretString --output text > /tmp/wp-db-secret.json 2>/dev/null; then
-    aws secretmanager get-secret-value --secret-id ${master_secret_arn} --query SecretString --output text > /tmp/rds-master_secret.json
+    aws secretmanager get-secret-value --secret-id ${master_secret_arn} --query SecretString --output text > /tmp/rds-master-secret.json
     MASTER_USER=$(jq -r '.username' /tmp/rds-master-secret.json)
     MASTER_PASSWORD=$(jq -r '.password' /tmp/rds-master-secret.json)
      APP_PASSWORD=$(openssl rand -hex 24)
@@ -44,6 +44,6 @@ fi
 APP_USER=$(jq -r '.username' /tmp/wp-db-secret.json)
 APP_PASSWORD=$(jq -r '.password' /tmp/wp-db-secret.json)
 curl -fsSLo /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-php /tmp/wp-cli.phar --allow-root config create --path=/var/www/html --dbname=${db_name} --dbuser="$APP_USER" --dbpass="APP_PASSWORD" --dbhost=${db_address} --skip-check
+php /tmp/wp-cli.phar --allow-root config create --path=/var/www/html --dbname=${db_name} --dbuser="$APP_USER" --dbpass=$"APP_PASSWORD" --dbhost=${db_address} --skip-check
 chown apache:apache /var/www/html/wp-config.php
 systemctl restart httpd

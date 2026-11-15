@@ -33,11 +33,11 @@ locals {
         rule_number = 110 + index
         cidr        = subnet.cidr
         from_port   = 1024
-        to_port     = 6553
+        to_port     = 65535
       }
     ],
     [
-      { key = "nat_response", rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 6553 }
+      { key = "nat_response", rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535 }
     ]
   )
     public_egress = concat(
@@ -48,7 +48,7 @@ locals {
         from_port = 80
         to_port = 80
       }],
-      [ { key = "client_response", rule_number = 110, cidr = "0.0.0.0/0", from_port = 1024, to_port = 6553 },
+      [ { key = "client_response", rule_number = 110, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535 },
       { key = "nat_http", rule_number = 120, cidr = "0.0.0.0/0", from_port = 80, to_port = 80 },
       { key = "nat_https", rule_number = 121, cidr = "0.0.0.0/0", from_port = 443, to_port = 443 }]
       )
@@ -66,9 +66,9 @@ locals {
         rule_number = 110 + index
         cidr = cidr.cidr
         from_port = 1024
-        to_port = 6553
+        to_port = 65535
       }],
-      [{key = "internet_response", rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 6553}]
+      [{key = "internet_response", rule_number = 140, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535}]
       ,
       [for index, cidr in local.network_subnets.app : {
       key = "efs_nfs_${index}"
@@ -76,8 +76,7 @@ locals {
         cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
-      }],
-      [{key = "external_ephemeral",rule_number = 140, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535}]
+      }]
       )
 
       app_egress = concat (
@@ -90,8 +89,7 @@ locals {
       }],
       [
         {key = "http", rule_number = 110, cidr = "0.0.0.0/0", from_port = 80, to_port = 80 },
-        {key = "https", rule_number = 120, cidr = "0.0.0.0/0", from_port = 443, to_port = 443 },
-        {key = "external_ephemeral", rule_number = 130, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535 }
+        {key = "https", rule_number = 120, cidr = "0.0.0.0/0", from_port = 443, to_port = 443 }
       ],
       [for index, cidr in local.network_subnets.app : {
         key = "efs_nfs_${index}"

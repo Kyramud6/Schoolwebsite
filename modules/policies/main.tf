@@ -33,6 +33,7 @@ resource "aws_security_group" "app" {
   description = "EC2 Instance will be limited the inbound by Load Balancer"
   vpc_id      = var.vpc_id
 
+  egress = []
 }
 
 resource "aws_vpc_security_group_ingress_rule" "app_from_alb" {
@@ -56,6 +57,7 @@ resource "aws_security_group" "database" {
   name        = "${var.projectname}-${var.environment}-database"
   description = "MySQL access from WordPress only"
   vpc_id      = var.vpc_id
+  egress = []
 
   tags = {
     Name = "${var.projectname}-${var.environment}-database-sg"
@@ -85,7 +87,8 @@ resource "aws_security_group" "efs" {
   name        = "${var.projectname}-${var.environment}-efs"
   description = "File Sharing access for WordPress to EC2s."
   vpc_id      = var.vpc_id
-
+  egress = []
+  
   tags = {
     Name = "${var.projectname}-${var.environment}-efs-sg"
   }
