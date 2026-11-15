@@ -5,7 +5,7 @@ variable "lb_dns_name" {
 
 variable "projectname" {
     description = "Project name"
-    type = stirng
+    type = string
 }
 
 variable "environment" {

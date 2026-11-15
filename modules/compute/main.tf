@@ -39,7 +39,7 @@ resource "aws_iam_role_policy" "wordpress_secret" {
       {
         Effect   = "Allow"
         Action   = ["secretsmanager:GetSecretValue"]
-        Resource = [aws_db_instance.wordpress.master_user_secret[0].secret_arn]
+        Resource = [var.master_secret_arn]
       },
       {
         Effect   = "Allow"
@@ -64,7 +64,7 @@ resource "aws_launch_template" "wordpress" {
     name = aws_iam_instance_profile.ec2.name
   }
 
-  vpc_security_group_ids = [aws_security_group.app.id]
+  vpc_security_group_ids = [var.security_group_id]
 
   metadata_options {
     http_endpoint               = "enabled"
@@ -86,10 +86,10 @@ resource "aws_launch_template" "wordpress" {
   user_data = base64encode(templatefile("${path.module}/wordpress_user.sh.tftpl", {
     app_secret_arn    = aws_secretsmanager_secret.wordpress_db_app.arn
     aws_region        = var.aws_region
-    db_address        = aws_db_instance.wordpress.address
+    db_address        = var.db_address
     db_name           = var.db_name
-    efs_id            = aws_efs_file_system.wordpress.id
-    master_secret_arn = aws_db_instance.wordpress.master_user_secret[0].secret_arn
+    efs_id            = var.efs_id
+    master_secret_arn = var.master_secret_arn
   }))
 
   tag_specifications {
@@ -112,7 +112,7 @@ resource "aws_autoscaling_group" "wordpress" {
   min_size                  = var.asg_min_size
   desired_capacity          = var.asg_min_size
   max_size                  = var.asg_max_size
-  vpc_zone_identifier       = aws_subnet.app[*].id
+  vpc_zone_identifier       = var.subnet_ids
   health_check_type         = "ELB"
   health_check_grace_period = 900
 
