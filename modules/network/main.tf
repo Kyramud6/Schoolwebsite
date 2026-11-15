@@ -22,55 +22,57 @@ locals {
     }]
   }
   network_acl_rule = {
-    public_ingress = concat (
-        [{key = "cloudfront_http", rule_number = 100, cidr = "0.0.0.0/0", from_port = 80, to_port = 80},
-        {key = "cloudfront_https", rule_number = 101, cidr = "0.0.0.0/0", from_port = 443, to_port = 443}],
-        [for index, cidr in local.network_subnets.app : {
-            key = "app_ephemeral_${index}"
-            rule_number = 100 + index
-            cidr = cidr.cidr
-            from_port = 1024
-            to_port = 65535
-        }]
-    )
-
+  public_ingress = concat(
+    [
+      { key = "cloudfront_http",  rule_number = 100, cidr = "0.0.0.0/0", from_port = 80,   to_port = 80 },
+      { key = "cloudfront_https", rule_number = 101, cidr = "0.0.0.0/0", from_port = 443,  to_port = 443 }
+    ],
+    [
+      for index, subnet in local.network_subnets.app : {
+        key         = "app_ephemeral_${index}"
+        rule_number = 110 + index
+        cidr        = subnet.cidr
+        from_port   = 1024
+        to_port     = 6553
+      }
+    ],
+    [
+      { key = "nat_response", rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 6553 }
+    ]
+  )
     public_egress = concat(
       [for index, cidr in local.network_subnets.app : {
         key = "lb_to_app_http_${index}"
-        rule_number = 110 + index
+        rule_number = 100 + index
         cidr = cidr.cidr
         from_port = 80
         to_port = 80
       }],
-      [{key = "client_ephemeral",rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535 }]
-
+      [ { key = "client_response", rule_number = 110, cidr = "0.0.0.0/0", from_port = 1024, to_port = 6553 },
+      { key = "nat_http", rule_number = 120, cidr = "0.0.0.0/0", from_port = 80, to_port = 80 },
+      { key = "nat_https", rule_number = 121, cidr = "0.0.0.0/0", from_port = 443, to_port = 443 }]
       )
 
     app_ingress = concat(
       [for index, cidr in local.network_subnets.public : {
         key = "alb_public_${index}"
-        rule_number = 120 + index
+        rule_number = 100 + index
         cidr = cidr.cidr
         from_port = 80
         to_port = 80
       }],
       [for index, cidr in local.network_subnets.public : {
         key = "alb_ephemeral_${index}"
-        rule_number = 130 + index
+        rule_number = 110 + index
         cidr = cidr.cidr
         from_port = 1024
-        to_port = 65535
+        to_port = 6553
       }],
-      [for index, cidr in local.network_subnets.data : {
-        key="database_ephemeral_${index}"
-        rule_number = 140 + index
-        cidr = cidr.cidr
-        from_port = 1024
-        to_port = 65535
-      }],
+      [{key = "internet_response", rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 6553}]
+      ,
       [for index, cidr in local.network_subnets.app : {
       key = "efs_nfs_${index}"
-        rule_number = 150 + index
+        rule_number = 130 + index
         cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
@@ -93,7 +95,7 @@ locals {
       ],
       [for index, cidr in local.network_subnets.app : {
         key = "efs_nfs_${index}"
-        rule_number = 140 + index
+        rule_number = 130 + index
         cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
@@ -180,7 +182,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_internet_gateway.main.id
+    gateway_id = aws_internet_gateway.main.id
   }
 
   tags = {

@@ -6,6 +6,8 @@ resource "aws_security_group" "alb" {
   name        = "${var.projectname}-${var.environment}-alb"
   description = "HTTP access from cloudfront"
   vpc_id      = var.vpc_id
+
+  egress = []
 }
 
 resource "aws_vpc_security_group_ingress_rule" "alb_from_cloudfront" {
