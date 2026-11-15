@@ -21,6 +21,7 @@ locals {
       cidr = cidrsubnet(var.vpc_dir, 4, index + 4)
     }]
   }
+
   network_acl_rule = {
   public_ingress = concat(
     [
@@ -38,6 +39,22 @@ locals {
     ],
     [
       { key = "nat_response", rule_number = 120, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535 }
+    ],
+    [for index, subnet in local.network_subnets.app : {
+        key         = "nat_http_from_app_${index}"
+        rule_number = 130 + index
+        cidr        = subnet.cidr
+        from_port   = 80
+        to_port     = 80
+      }
+      ],
+      [for index, subnet in local.network_subnets.app : {
+        key         = "nat_https_from_app_${index}"
+        rule_number = 140 + index
+        cidr        = subnet.cidr
+        from_port   = 443
+        to_port     = 443
+      }
     ]
   )
     public_egress = concat(
@@ -76,7 +93,22 @@ locals {
         cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
-      }]
+      }], 
+      [for index, subnet in local.network_subnets.app : {
+        key         = "efs_ephemeral_${index}"
+        rule_number = 160 + index
+        cidr        = subnet.cidr
+        from_port   = 1024
+        to_port     = 65535
+      }],
+      [for index, cidr in local.network_subnets.data : {
+        key         = "mysql_response_${index}"
+        rule_number = 150 + index
+        cidr        = cidr.cidr
+        from_port   = 1024
+        to_port     = 65535
+        }
+      ]
       )
 
       app_egress = concat (
@@ -97,7 +129,22 @@ locals {
         cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
-      }]
+      }],
+      [for index, cidr in local.network_subnets.public : {
+        key = "alb_response_${index}"
+        rule_number = 140 + index
+        cidr = cidr.cidr
+        from_port = 1024
+        to_port = 65535
+      }],
+      [for index, cidr in local.network_subnets.app : {
+        key         = "efs_response_${index}"
+        rule_number = 150 + index
+        cidr        = cidr.cidr
+        from_port   = 1024
+        to_port     = 65535
+      }
+      ] 
       )
 
       data_ingress = [for index, cidr in local.network_subnets.app : {
@@ -110,7 +157,7 @@ locals {
 
       data_egress = [for index, cidr in local.network_subnets.app : {
         key = "mysql_response_to_app_${index}"
-        rule_number = 100 + index
+        rule_number = 150 + index
         cidr = cidr.cidr
         from_port = 1024
         to_port = 65535
@@ -145,7 +192,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.projectname} - ${var.environment}-app-${count.index + 1}"
+    Name = "${var.projectname} - ${var.environment}-public-${count.index + 1}"
     Tier = "public"
   }
 }
@@ -255,7 +302,7 @@ resource "aws_network_acl" "public" {
     subnet_ids = aws_subnet.public[*].id
 
     tags = {
-        Name = "${var.projectname}-${var.environment}-public-alc"
+        Name = "${var.projectname}-${var.environment}-public-acl"
         Tier = "public"  
     }
 }

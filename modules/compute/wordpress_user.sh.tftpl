@@ -11,7 +11,7 @@ mkdir -p /mnt/wordpress-efs /var/www/html
 until mount -t efs -o tls ${efs_id}:/ /mnt/wordpress-efs; do
     sleep 10
 done
-echo '${efs_id}:/ /mnt/wordpress-efs efs _netdev.tls 0 0' >> /etc/fstab
+echo '${efs_id}:/ /mnt/wordpress-efs efs _netdev,tls 0 0' >> /etc/fstab
 
 curl -fsSL https://wordpress.org/latest.tar.gz -o /tmp/wordpress.tar.gz
 tar -xzf /tmp/wordpress.tar.gz --strip-components=1 -C /var/www/html
@@ -31,8 +31,8 @@ aws configure set region ${aws_region}
 exec 9>/mnt/wordpress-efs/.db-setup.lock
 flock 9
 
-if ! aws secretmanager get-secret-value --secret-id ${app_secret_arn} --query SecretString --output text > /tmp/wp-db-secret.json 2>/dev/null; then
-    aws secretmanager get-secret-value --secret-id ${master_secret_arn} --query SecretString --output text > /tmp/rds-master-secret.json
+if ! aws secretsmanager get-secret-value --secret-id ${app_secret_arn} --query SecretString --output text > /tmp/wp-db-secret.json 2>/dev/null; then
+    aws secretsmanager get-secret-value --secret-id ${master_secret_arn} --query SecretString --output text > /tmp/rds-master-secret.json
     MASTER_USER=$(jq -r '.username' /tmp/rds-master-secret.json)
     MASTER_PASSWORD=$(jq -r '.password' /tmp/rds-master-secret.json)
      APP_PASSWORD=$(openssl rand -hex 24)
@@ -44,6 +44,6 @@ fi
 APP_USER=$(jq -r '.username' /tmp/wp-db-secret.json)
 APP_PASSWORD=$(jq -r '.password' /tmp/wp-db-secret.json)
 curl -fsSLo /tmp/wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-php /tmp/wp-cli.phar --allow-root config create --path=/var/www/html --dbname=${db_name} --dbuser="$APP_USER" --dbpass=$"APP_PASSWORD" --dbhost=${db_address} --skip-check
+php /tmp/wp-cli.phar --allow-root config create --path=/var/www/html --dbname=${db_name} --dbuser="$APP_USER" --dbpass="$APP_PASSWORD" --dbhost=${db_address} --skip-check
 chown apache:apache /var/www/html/wp-config.php
 systemctl restart httpd
