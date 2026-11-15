@@ -62,5 +62,5 @@ variable "region" {
 variable "domain_name" {
   description = "public domain and alb origin hostname"
   type = string
-  defaut = "yakinbisalolos.click"
+  default = "yakinbisalolos.click"
 }

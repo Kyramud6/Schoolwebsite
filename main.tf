@@ -79,7 +79,7 @@ module "compute" {
 module "cloudfront" {
     source = "./modules/cloudfront"
 
-    lb_dns_name = module.loadbalancer.origin.domain_name
+    origin_domain_name = module.loadbalancer.origin_domain_name
     projectname = var.projectname
     environment  = var.environment
 

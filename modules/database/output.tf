@@ -1,6 +1,6 @@
 output "database_address" {
   description = "Private DNS Address of RDS MySQL"
-  value       = var.db_address
+  value       = aws_db_instance.wordpress.address
 }
 
 output "database_name" {
@@ -10,5 +10,5 @@ output "database_name" {
 
 output "master_secret_arn" {
   description = "Secret manager ARN for the db"
-  value       = var.master_secret_arn
+  value       = aws_db_instance.wordpress.master_user_secret[0].secret_arn
 }
