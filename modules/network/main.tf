@@ -78,15 +78,6 @@ locals {
         from_port = 80
         to_port = 80
       }],
-      [for index, cidr in local.network_subnets.public : {
-        key = "alb_ephemeral_${index}"
-        rule_number = 110 + index
-        cidr = cidr.cidr
-        from_port = 1024
-        to_port = 65535
-      }],
-      [{key = "internet_response", rule_number = 140, cidr = "0.0.0.0/0", from_port = 1024, to_port = 65535}]
-      ,
       [for index, cidr in local.network_subnets.app : {
       key = "efs_nfs_${index}"
         rule_number = 130 + index
@@ -211,7 +202,7 @@ resource "aws_subnet" "app" {
 }
 
 resource "aws_subnet" "data" {
-  count = length(local.network_subnets.app)
+  count = length(local.network_subnets.data)
   vpc_id                  = aws_vpc.main.id
   cidr_block              = local.network_subnets.data[count.index].cidr
   availability_zone       = local.network_subnets.data[count.index].az

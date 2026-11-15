@@ -3,8 +3,9 @@
 set -euo pipefail
 umask 077
 trap 'rm -f /tmp/wp-db-secret.json /tmp/rds-master-secret.json /tmp/wp-cli.phar /tmp/wordpress.tar.gz' EXIT
-
-dnf install -y httpd php php-mysqlnd php-gd php-xml php-mbstring php-intl php-zip amazon-efs-utils mariadb105 jq tar curl
+dnf install -y awscli-2
+dnf install -y httpd php php-fpm php-mysqlnd php-gd php-xml php-mbstring php-intl php-zip amazon-efs-utils mariadb105 jq tar curl
+systemctl enable --now php-fpm
 systemctl enable --now httpd
 
 mkdir -p /mnt/wordpress-efs /var/www/html
