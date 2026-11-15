@@ -46,7 +46,7 @@ variable "target_group_arn" {
 
 variable "db_address" {
     description = "RDS endpoint address"
-    type = stirng
+    type = string
 }
 
 variable "db_name" {

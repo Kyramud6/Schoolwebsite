@@ -1,6 +1,6 @@
 variable "projectname" {
     description = "Project name"
-    type = stirng
+    type = string
 }
 
 variable "environment" {
@@ -10,7 +10,7 @@ variable "environment" {
 
 variable "subnet_ids" {
     description = "Security groups access to the MySQL"
-    type = string
+    type = list(string)
 }
 
 variable "db_ver" {
@@ -25,7 +25,7 @@ variable "db_instance" {
 
 variable "db_name" {
     description = "RDS name."
-    type = stirng
+    type = string
 }
 
 variable "db_username" {
@@ -43,5 +43,6 @@ variable "az_zone_db" {
     description = "Whether to deploy AZ."
     type = bool
 }
+
 
 
