@@ -8,17 +8,17 @@ locals {
   network_subnets = {
     public = [for index, az in local.availability_zones : {
       az   = az
-      cidr = cidr.cidrsubnet(var.vpc_dir, 4, index)
+      cidr = cidrsubnet(var.vpc_dir, 4, index)
     }]
 
     app = [for index, az in local.availability_zones : {
       az   = az
-      cidr = cidr.cidrsubnet(var.vpc_dir, 4, index + 2)
+      cidr = cidrsubnet(var.vpc_dir, 4, index + 2)
     }]
 
     data = [for index, az in local.availability_zones : {
       az   = az
-      cidr = cidr.cidrsubnet(var.vpc_dir, 4, index + 4)
+      cidr = cidrsubnet(var.vpc_dir, 4, index + 4)
     }]
   }
   network_acl_rule = {
@@ -27,7 +27,7 @@ locals {
         [for index, cidr in local.network_subnets.app : {
             key = "app_ephemeral_${index}"
             rule_number = 110 + index
-            cidr = cidr.cidr.cidr
+            cidr = cidr.cidr
             from_port = 1024
             to_port = 65535
         }]
@@ -37,7 +37,7 @@ locals {
       [for index, cidr in local.network_subnets.app : {
         key = "lb_to_app_http_${index}"
         rule_number = 100 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 80
         to_port = 80
       }],
@@ -49,28 +49,28 @@ locals {
       [for index, cidr in local.network_subnets.public : {
         key = "alb_public_${index}"
         rule_number = 110 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 80
         to_port = 80
       }],
       [for index, cidr in local.network_subnets.public : {
         key = "alb_ephemeral_${index}"
         rule_number = 110 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 1024
         to_port = 65535
       }],
       [for index, cidr in local.network_subnets.data : {
         key="database_ephemeral_${index}"
         rule_number = 120 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 1024
         to_port = 65535
       }],
       [for index, cidr in local.network_subnets.app : {
       key = "efs_nfs_${index}"
         rule_number = 130 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
       }],
@@ -81,7 +81,7 @@ locals {
         [for index, cidr in local.network_subnets.data : {
           key = "mysql_${index}"
           rule_number = 100 + index
-          cidr = cidr.cidr.cidr
+          cidr = cidr.cidr 
           from_port = 3306
           to_port = 3306
       }],
@@ -93,7 +93,7 @@ locals {
       [for index, cidr in local.network_subnets.app : {
         key = "efs_nfs_${index}"
         rule_number = 140 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
       }]
@@ -102,7 +102,7 @@ locals {
       data_ingress = [for index, cidr in local.network_subnets.app : {
         key = "mysql_from_app_${index}"
         rule_number = 100 + index
-        cidr = cidr.cidr.cidr 
+        cidr = cidr.cidr 
         from_port = 3306
         to_port = 3306
       }]
@@ -110,7 +110,7 @@ locals {
       data_egress = [for index, cidr in local.network_subnets.app : {
         key = "mysql_response_to_app_${index}"
         rule_number = 100 + index
-        cidr = cidr.cidr.cidr
+        cidr = cidr.cidr
         from_port = 1024
         to_port = 65535
       }]
@@ -219,7 +219,7 @@ resource "aws_route_table" "app" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    nat_nat_gateway_id = aws_nat_gateway.main.id
+    nat_gateway_id = aws_nat_gateway.main.id
   }
 
   tags = {
@@ -334,7 +334,7 @@ resource "aws_network_acl" "data" {
 resource "aws_network_acl_rule" "data_ingress" {
     for_each = { for rule in local.network_acl_rule.data_ingress : rule.key => rule}
 
-    network_acl_id = ws_network_acl.data.id
+    network_acl_id = aws_network_acl.data.id
     rule_number = each.value.rule_number
     egress = false
     protocol = "tcp"
@@ -347,7 +347,7 @@ resource "aws_network_acl_rule" "data_ingress" {
 resource "aws_network_acl_rule" "data_egress" {
     for_each = { for rule in local.network_acl_rule.data_egress : rule.key => rule}
 
-    network_acl_id = ws_network_acl.data.id
+    network_acl_id = aws_network_acl.data.id
     rule_number = each.value.rule_number
     egress = true
     protocol = "tcp"
