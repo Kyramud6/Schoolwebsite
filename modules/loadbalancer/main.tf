@@ -3,7 +3,7 @@ resource "aws_lb" "wordpress" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.security_group_id]
-  subnets            = var.public_subnet_ids  
+  subnets            = var.public_subnet_ids
 
   enable_deletion_protection = var.environment == "prod"
 

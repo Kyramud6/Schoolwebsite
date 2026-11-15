@@ -29,37 +29,37 @@ variable "asg_max_size" {
 }
 
 variable "subnet_ids" {
-    description = "Subnets IDs for EC2."
-    type = list(string)
-    
+  description = "Subnets IDs for EC2."
+  type        = list(string)
+
 }
 
 variable "security_group_id" {
-    description = "Security group for app"
-    type = string
+  description = "Security group for app"
+  type        = string
 }
 
 variable "target_group_arn" {
-    description = "ALB target group for health check and traffic."
-    type = string
+  description = "ALB target group for health check and traffic."
+  type        = string
 }
 
 variable "db_address" {
-    description = "RDS endpoint address"
-    type = string
+  description = "RDS endpoint address"
+  type        = string
 }
 
 variable "db_name" {
-    description = "RDS name"
-    type = string
+  description = "RDS name"
+  type        = string
 }
 
 variable "master_secret_arn" {
-    description = "Master crendentials for the RDS."
-    type = string
+  description = "Master crendentials for the RDS."
+  type        = string
 }
 
 variable "efs_id" {
-    description = "EFS file system id"
-    type = string
+  description = "EFS file system id"
+  type        = string
 }

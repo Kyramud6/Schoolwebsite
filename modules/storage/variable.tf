@@ -1,15 +1,15 @@
 variable "subnet_ids" {
-    type = list(string)
+  type = list(string)
 }
 
 variable "security_group_id" {
-    type = string
+  type = string
 }
 
 variable "projectname" {
-    type = string
+  type = string
 }
 
 variable "environment" {
-    type = string
+  type = string
 }

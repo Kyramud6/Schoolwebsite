@@ -18,16 +18,16 @@ output "data_subnet_ids" {
   value       = aws_subnet.data[*].id
 }
 output "app_subnet_cidrs" {
-    description = "Application subnet CIDRs for ACL rules and documentation."
-    value = aws_subnet.app[*].cidr_block
+  description = "Application subnet CIDRs for ACL rules and documentation."
+  value       = aws_subnet.app[*].cidr_block
 }
 
 output "public_subnet_cidrs" {
-    description = "Public subnet cidrs for acl rules and documentation."
-    value = aws_subnet.public[*].cidr_block
+  description = "Public subnet cidrs for acl rules and documentation."
+  value       = aws_subnet.public[*].cidr_block
 }
 
 output "data_subnet_cidrs" {
-    description = "Data subnet cidrs for acl rule and documentation."
-    value = aws_subnet.data[*].cidr_block
+  description = "Data subnet cidrs for acl rule and documentation."
+  value       = aws_subnet.data[*].cidr_block
 }

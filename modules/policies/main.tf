@@ -37,11 +37,11 @@ resource "aws_security_group" "app" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "app_from_alb" {
-    security_group_id = aws_security_group.app.id
-    referenced_security_group_id = aws_security_group.alb.id
-    ip_protocol = "tcp"
-    from_port = 80
-    to_port = 80
+  security_group_id            = aws_security_group.app.id
+  referenced_security_group_id = aws_security_group.alb.id
+  ip_protocol                  = "tcp"
+  from_port                    = 80
+  to_port                      = 80
 }
 
 resource "aws_vpc_security_group_egress_rule" "app_https" {
@@ -57,7 +57,7 @@ resource "aws_security_group" "database" {
   name        = "${var.projectname}-${var.environment}-database"
   description = "MySQL access from WordPress only"
   vpc_id      = var.vpc_id
-  egress = []
+  egress      = []
 
   tags = {
     Name = "${var.projectname}-${var.environment}-database-sg"
@@ -79,7 +79,7 @@ resource "aws_vpc_security_group_egress_rule" "app_mysql" {
   description                  = "Mysql security group for WordPress"
   ip_protocol                  = "tcp"
   from_port                    = 3306
-  to_port                      = 3306  
+  to_port                      = 3306
 }
 
 
@@ -87,8 +87,8 @@ resource "aws_security_group" "efs" {
   name        = "${var.projectname}-${var.environment}-efs"
   description = "File Sharing access for WordPress to EC2s."
   vpc_id      = var.vpc_id
-  egress = []
-  
+  egress      = []
+
   tags = {
     Name = "${var.projectname}-${var.environment}-efs-sg"
   }

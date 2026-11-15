@@ -1,17 +1,17 @@
 variable "vpc_dir" {
-    description = "Ipv4 Range for VPC."
-    type = string
-    default = "10.0.0.0/16"
+  description = "Ipv4 Range for VPC."
+  type        = string
+  default     = "10.0.0.0/16"
 }
 
-variable "projectname" { 
-    description = "Project name"
-    type = string
+variable "projectname" {
+  description = "Project name"
+  type        = string
 }
 
 variable "environment" {
-    description = "deployment environment"
-    type = string
+  description = "deployment environment"
+  type        = string
 }
 
 variable "db_name" {
@@ -55,12 +55,12 @@ variable "asg_max_size" {
 }
 
 variable "region" {
-    type = string
-    default = "ap-southeast-1"
+  type    = string
+  default = "ap-southeast-1"
 }
 
 variable "domain_name" {
   description = "public domain and alb origin hostname"
-  type = string
-  default = "yakinbisalolos.click"
+  type        = string
+  default     = "yakinbisalolos.click"
 }

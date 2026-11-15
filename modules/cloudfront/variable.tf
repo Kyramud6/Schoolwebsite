@@ -4,11 +4,11 @@ variable "origin_domain_name" {
 }
 
 variable "projectname" {
-    description = "Project name"
-    type = string
+  description = "Project name"
+  type        = string
 }
 
 variable "environment" {
-    description = "Deployment environment"
-    type = string
+  description = "Deployment environment"
+  type        = string
 }

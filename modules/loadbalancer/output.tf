@@ -9,8 +9,8 @@ output "lb_zone_id" {
 }
 
 output "target_group_arn" {
-    description = "Target group arn for WordPress auto scaling group"
-    value = aws_lb_target_group.wordpress.arn
+  description = "Target group arn for WordPress auto scaling group"
+  value       = aws_lb_target_group.wordpress.arn
 }
 
 output "origin_domain_name" {

@@ -1,47 +1,47 @@
 variable "projectname" {
-    description = "Project name"
-    type = string
+  description = "Project name"
+  type        = string
 }
 
 variable "environment" {
-    description = "Deployment environment"
-    type = string
+  description = "Deployment environment"
+  type        = string
 }
 
 variable "subnet_ids" {
-    description = "Security groups access to the MySQL"
-    type = list(string)
+  description = "Security groups access to the MySQL"
+  type        = list(string)
 }
 
 variable "db_ver" {
-    description = "Database's Engine Version"
-    type = string
+  description = "Database's Engine Version"
+  type        = string
 }
 
 variable "db_instance" {
-    description = "Database instance class"
-    type = string
+  description = "Database instance class"
+  type        = string
 }
 
 variable "db_name" {
-    description = "RDS name."
-    type = string
+  description = "RDS name."
+  type        = string
 }
 
 variable "db_username" {
-    description = "Database master name, password"
-    type = string
+  description = "Database master name, password"
+  type        = string
 }
 
 variable "security_group_id" {
-    description = "Security group to access to SQL from app"
-    type = string
+  description = "Security group to access to SQL from app"
+  type        = string
 }
 
 
 variable "az_zone_db" {
-    description = "Whether to deploy AZ."
-    type = bool
+  description = "Whether to deploy AZ."
+  type        = bool
 }
 
 
