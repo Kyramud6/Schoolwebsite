@@ -27,7 +27,7 @@ locals {
         {key = "cloudfront_https", rule_number = 101, cidr = "0.0.0.0/0", from_port = 443, to_port = 443}],
         [for index, cidr in local.network_subnets.app : {
             key = "app_ephemeral_${index}"
-            rule_number = 110 + index
+            rule_number = 100 + index
             cidr = cidr.cidr
             from_port = 1024
             to_port = 65535
@@ -37,7 +37,7 @@ locals {
     public_egress = concat(
       [for index, cidr in local.network_subnets.app : {
         key = "lb_to_app_http_${index}"
-        rule_number = 100 + index
+        rule_number = 110 + index
         cidr = cidr.cidr
         from_port = 80
         to_port = 80
@@ -70,7 +70,7 @@ locals {
       }],
       [for index, cidr in local.network_subnets.app : {
       key = "efs_nfs_${index}"
-        rule_number = 130 + index
+        rule_number = 150 + index
         cidr = cidr.cidr
         from_port = 2049
         to_port = 2049
